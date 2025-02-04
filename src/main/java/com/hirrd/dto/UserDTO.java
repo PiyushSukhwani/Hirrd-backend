@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDTO {
 
-    private String id;
+    private long id;
     @NotBlank(message = "{user.name.absent}")
     private String name;
     @NotBlank(message = "{email.name.absent}")
@@ -24,8 +24,9 @@ public class UserDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W_])(?=.*\\d).{8,15}$", message = "{user.password.invalid}")
     private String password;
     private AccountType accountType;
+    private Long profileId;
 
     public User toEntity() {
-        return new User(this.id, this.name, this.email, this.password, this.accountType);
+        return new User(this.id, this.name, this.email, this.password, this.accountType, this.profileId);
     }
 }
