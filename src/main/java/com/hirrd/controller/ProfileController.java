@@ -1,11 +1,8 @@
 package com.hirrd.controller;
 
 import com.hirrd.dto.ProfileDTO;
-import com.hirrd.dto.ResponseDTO;
 import com.hirrd.exception.JobPortalException;
 import com.hirrd.service.ProfileService;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
