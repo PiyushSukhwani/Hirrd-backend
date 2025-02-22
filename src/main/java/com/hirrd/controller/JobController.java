@@ -1,6 +1,9 @@
 package com.hirrd.controller;
 
+import com.hirrd.dto.ApplicantDTO;
+import com.hirrd.dto.Application;
 import com.hirrd.dto.JobDTO;
+import com.hirrd.dto.ResponseDTO;
 import com.hirrd.exception.JobPortalException;
 import com.hirrd.service.JobService;
 import jakarta.validation.Valid;
@@ -32,7 +35,52 @@ public class JobController {
     }
 
     @GetMapping("/getJob/{id}")
-    public ResponseEntity<JobDTO> getJob(@PathVariable Long id ) throws JobPortalException {
+    public ResponseEntity<JobDTO> getJob(@PathVariable Long id) throws JobPortalException {
         return new ResponseEntity<>(jobService.getJob(id), HttpStatus.OK);
     }
+
+    @PostMapping("/apply/{id}")
+    public ResponseEntity<ResponseDTO> applyJob( @PathVariable Long id, @RequestBody ApplicantDTO applicantDTO) throws JobPortalException{
+        jobService.applyJob(id, applicantDTO);
+        return new ResponseEntity<>(new ResponseDTO("Applied Successfully"), HttpStatus.OK);
+    }
+
+    @GetMapping("/poster/{id}")
+    public ResponseEntity<List<JobDTO>> getJobsByPosterId(@PathVariable Long id) throws JobPortalException {
+        return new ResponseEntity<>(jobService.getJobsByPosterId(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/changeApplStatus")
+    public ResponseEntity<ResponseDTO> changeApplStatus(@RequestBody Application application) throws JobPortalException {
+        jobService.changeStatus(application);
+        return new ResponseEntity<>(new ResponseDTO("Application Status Changed Successfully"), HttpStatus.OK);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

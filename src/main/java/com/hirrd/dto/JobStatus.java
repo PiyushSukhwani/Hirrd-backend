@@ -2,5 +2,5 @@ package com.hirrd.dto;
 
 public enum JobStatus {
 
-    OPEN, CLOSED, DRAFT
+    ACTIVE, CLOSED, DRAFT
 }

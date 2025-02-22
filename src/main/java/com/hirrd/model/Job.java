@@ -1,6 +1,5 @@
 package com.hirrd.model;
 
-import com.hirrd.dto.Applicant;
 import com.hirrd.dto.JobDTO;
 import com.hirrd.dto.JobStatus;
 import lombok.AllArgsConstructor;
@@ -32,10 +31,11 @@ public class Job {
     private String description;
     private List<String> skillsRequired;
     private JobStatus jobStatus;
+    private Long posterId;
 
     public JobDTO toDTO() {
-        return new JobDTO(this.id, this.jobTitle, this.company, this.applicants, this.about, this.experience,
+        return new JobDTO(this.id, this.jobTitle, this.company, this.applicants != null ? this.applicants.stream().map((x) -> x.toDTO()).toList() : null, this.about, this.experience,
                 this.jobType, this.location, this.packageOffered, this.postTime, this.description,
-                this.skillsRequired, this.jobStatus);
+                this.skillsRequired, this.jobStatus, this.posterId);
     }
 }
