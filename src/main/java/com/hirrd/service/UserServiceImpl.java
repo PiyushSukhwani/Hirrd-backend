@@ -1,6 +1,7 @@
 package com.hirrd.service;
 
 import com.hirrd.dto.LoginDTO;
+import com.hirrd.dto.NotificationDTO;
 import com.hirrd.dto.ResponseDTO;
 import com.hirrd.dto.UserDTO;
 import com.hirrd.exception.JobPortalException;
@@ -40,11 +41,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ProfileService profileService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Override
     public UserDTO registerUser(UserDTO userDTO) throws JobPortalException {
         Optional<User> optional = userRepository.findByEmail(userDTO.getEmail());
         if (optional.isPresent()) throw new JobPortalException("USER_FOUND");
-        userDTO.setProfileId(profileService.createProfile(userDTO.getEmail()));
+        userDTO.setProfileId(profileService.createProfile(userDTO));
         userDTO.setId(Utilities.getNextSequence("users"));
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User user = userDTO.toEntity();
@@ -93,6 +97,11 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(loginDTO.getPassword()));
         userRepository.save(user);
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setUserId(user.getId());
+        notificationDTO.setMessage("Password Reset Successful");
+        notificationDTO.setAction("Password Reset");
+        notificationService.sendNotification(notificationDTO);
         return new ResponseDTO("Password changed successfully.");
     }
 

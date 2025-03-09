@@ -1,6 +1,7 @@
 package com.hirrd.service;
 
 import com.hirrd.dto.ProfileDTO;
+import com.hirrd.dto.UserDTO;
 import com.hirrd.exception.JobPortalException;
 import com.hirrd.model.Profile;
 import com.hirrd.repository.ProfileRepository;
@@ -18,10 +19,12 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileRepository profileRepository;
 
     @Override
-    public Long createProfile(String email) throws JobPortalException {
+    public Long createProfile(UserDTO userDTO) throws JobPortalException {
         Profile profile = new Profile();
         profile.setId(Utilities.getNextSequence("profiles"));
-        profile.setEmail(email);
+        profile.setName(userDTO.getName());
+        profile.setEmail(userDTO.getEmail());
+        profile.setPicture(null);
         profile.setSkills(new ArrayList<>());
         profile.setExperiences(new ArrayList<>());
         profile.setCertifications(new ArrayList<>());
