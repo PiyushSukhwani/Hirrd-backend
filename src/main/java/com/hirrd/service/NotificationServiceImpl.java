@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service("notificationService")
-public class NotificationServiceImpl implements NotificationService{
+public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     private NotificationRepository notificationRepository;
@@ -29,5 +29,13 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public List<Notification> getUnReadNotifications(Long userId) {
         return notificationRepository.findByUserIdAndStatus(userId, NotificationStatus.UNREAD);
+    }
+
+    @Override
+    public void readNotifications(Long id) throws JobPortalException {
+        Notification noti = notificationRepository.findById(id).orElseThrow(() -> new JobPortalException("No Notification Found"));
+
+        noti.setStatus(NotificationStatus.READ);
+        notificationRepository.save(noti);
     }
 }

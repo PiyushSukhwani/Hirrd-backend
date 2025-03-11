@@ -19,11 +19,25 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Override
     public JobDTO postJob(JobDTO jobDTO) throws JobPortalException {
         if (jobDTO.getId() == 0) {
             jobDTO.setId(Utilities.getNextSequence("jobs"));
             jobDTO.setPostTime(LocalDateTime.now());
+
+            NotificationDTO notiDTO = new NotificationDTO();
+            notiDTO.setUserId(jobDTO.getPosterId());
+            notiDTO.setAction("Job Posted");
+            notiDTO.setMessage("Job posted successfully for " + jobDTO.getJobTitle() + " at " + jobDTO.getCompany());
+            notiDTO.setRoute("/posted-job/" + jobDTO.getId());
+            try {
+                notificationService.sendNotification(notiDTO);
+            } catch (JobPortalException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             Job job = jobRepository.findById(jobDTO.getId()).orElseThrow(() -> new JobPortalException("JOB_NOT_FOUND"));
             if (job.getJobStatus().equals(JobStatus.DRAFT) || jobDTO.getJobStatus().equals(JobStatus.CLOSED)) {
@@ -67,9 +81,21 @@ public class JobServiceImpl implements JobService {
         Job job = jobRepository.findById(application.getId()).orElseThrow(() -> new JobPortalException("JOB_NOT_FOUND"));
         List<Applicant> applicants = job.getApplicants().stream().map((x) -> {
             if (application.getApplicantId() == x.getApplicantId()) {
+
                 x.setApplicationStatus(application.getApplicationStatus());
+
                 if (application.getApplicationStatus().equals(ApplicationStatus.INTERVIEWING)) {
                     x.setInterviewTime((application.getInterviewTime()));
+                    NotificationDTO notiDTO = new NotificationDTO();
+                    notiDTO.setUserId(application.getApplicantId());
+                    notiDTO.setAction("Interview Scheduled");
+                    notiDTO.setMessage("Interview scheduled for job id: " + application.getId());
+                    notiDTO.setRoute("/job-history");
+                    try {
+                        notificationService.sendNotification(notiDTO);
+                    } catch (JobPortalException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
             return x;
