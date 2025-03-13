@@ -57,6 +57,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getUserByEmail(String email) throws JobPortalException {
+        return userRepository.findByEmail(email).orElseThrow(() -> new JobPortalException("USER_NOT_FOUND")).toDTO();
+    }
+
+    @Override
     public UserDTO loginUser(LoginDTO loginDTO) throws JobPortalException {
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new JobPortalException("USER_NOT_FOUND"));
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
