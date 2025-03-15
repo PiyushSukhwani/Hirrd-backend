@@ -2,6 +2,7 @@ package com.hirrd.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -21,9 +22,9 @@ public class JwtHelper {
     }
 
     // Generate a JWT token
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .setSubject(username) // Set username as subject
+                .setSubject(userDetails.getUsername()) // Set username as subject
                 .setIssuedAt(new Date()) // Token issue date
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Expiration time
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Sign with HMAC SHA256
