@@ -7,12 +7,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
@@ -34,19 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (requestHeader != null && requestHeader.startsWith("Bearer")) {
             token = requestHeader.substring(7);
 
+
             try {
                 username = jwtHelper.extractUsername(token);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            catch (ExpiredJwtException e) {
-                e.printStackTrace();
-            }
-            catch (MalformedJwtException e) {
-                e.printStackTrace();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token: Unable to extract username");
+            } catch (ExpiredJwtException e) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token has expired. Please log in again.");
+            } catch (MalformedJwtException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token format. Please provide a valid token.");
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred while processing the token.");
             }
         }
 
