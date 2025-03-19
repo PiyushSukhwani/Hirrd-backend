@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -23,7 +25,13 @@ public class JwtHelper {
 
     // Generate a JWT token
     public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
+        Map<String, Object> claims = new HashMap<>();
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+        claims.put("id", customUserDetails.getId());
+        claims.put("name", customUserDetails.getName());
+        claims.put("accountType", customUserDetails.getAccountType());
+
+        return Jwts.builder().setClaims(claims)
                 .setSubject(userDetails.getUsername()) // Set username as subject
                 .setIssuedAt(new Date()) // Token issue date
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Expiration time
