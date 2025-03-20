@@ -30,6 +30,7 @@ public class JwtHelper {
         claims.put("id", customUserDetails.getId());
         claims.put("name", customUserDetails.getName());
         claims.put("accountType", customUserDetails.getAccountType());
+        claims.put("profileId", customUserDetails.getProfileId());
 
         return Jwts.builder().setClaims(claims)
                 .setSubject(userDetails.getUsername()) // Set username as subject

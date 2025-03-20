@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @Validated
 @RequestMapping("/notification")
 public class NotificationController {
